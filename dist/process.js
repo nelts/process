@@ -5,7 +5,7 @@ const childProcess = require("child_process");
 const utils_1 = require("./utils");
 const node_1 = require("./node");
 const cluster = require("cluster");
-const scriptFilename = path.resolve(__dirname, './index');
+const scriptFilename = path.resolve(__dirname, './runtime');
 class Process {
     constructor(kind = utils_1.CHILD_PROCESS_TYPE.MASTER, mpid = process.pid) {
         this._mpid = mpid;
