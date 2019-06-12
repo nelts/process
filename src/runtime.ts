@@ -47,7 +47,7 @@ class Runtime {
   }
 
   async create() {
-    if (typeof this.sandbox.componentWillCreate) await this.sandbox.componentWillCreate();
+    if (typeof this.sandbox.componentWillCreate === 'function') await this.sandbox.componentWillCreate();
     this.createMessager();
     unbindError(errorHandler);
     this.errorHandler = err => this.sandbox.componentCatchError && this.sandbox.componentCatchError(err);
@@ -56,7 +56,7 @@ class Runtime {
   }
 
   async destroy() {
-    if (typeof this.sandbox.componentWillDestroy) await this.sandbox.componentWillDestroy();
+    if (typeof this.sandbox.componentWillDestroy === 'function') await this.sandbox.componentWillDestroy();
     process.off('message', this.messageHandler);
     delete this.sandbox.send;
     delete this.sandbox.kill;
@@ -65,7 +65,7 @@ class Runtime {
     unbindError(this.errorHandler);
     const errorHandler = (err: Error) => console.error('[closing error]:', err);
     bindError(errorHandler);
-    if (typeof this.sandbox.componentDidDestroyed) await this.sandbox.componentDidDestroyed();
+    if (typeof this.sandbox.componentDidDestroyed === 'function') await this.sandbox.componentDidDestroyed();
   }
 
   async createMessager() {
