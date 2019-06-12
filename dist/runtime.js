@@ -1,0 +1,89 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("reflect-metadata");
+const path = require("path");
+const process_1 = require("./process");
+const utils_1 = require("./utils");
+const commandArgvParser = require("minimist");
+let args = {};
+const argv = process.argv.slice(2);
+if (!argv.length) {
+    console.error('process.argv need arguments');
+    process.exit(1);
+}
+if (argv.length === 1 && argv[0].startsWith('{') && argv[0].endsWith('}')) {
+    args = JSON.parse(argv[0]);
+}
+else {
+    args = commandArgvParser(argv) || {};
+}
+if (!path.isAbsolute(args.script)) {
+    args.script = path.resolve(process.cwd(), args.script);
+}
+args.kind = args.kind || utils_1.CHILD_PROCESS_TYPE.MASTER;
+args.mpid = args.mpid || process.pid;
+const errorHandler = (err) => {
+    console.error('[bootstrap error]:', err);
+    sendToParent(utils_1.STATUS.BOOTSTRAP_FAILED);
+    process.exit(1);
+};
+bindError(errorHandler);
+const sandbox = require(args.script);
+class Runtime {
+    constructor() {
+        this.processer = new process_1.default(args.kind, args.mpid);
+        this.processer.onExit((next) => this.destroy().then(next).catch(next));
+        this.sandbox = new sandbox.default(this.processer, args);
+    }
+    async create() {
+        if (typeof this.sandbox.componentWillCreate)
+            await this.sandbox.componentWillCreate();
+        this.createMessager();
+        unbindError(errorHandler);
+        this.errorHandler = err => this.sandbox.componentCatchError && this.sandbox.componentCatchError(err);
+        bindError(this.errorHandler);
+        if (typeof this.sandbox.componentDidCreated === 'function')
+            await this.sandbox.componentDidCreated();
+    }
+    async destroy() {
+        if (typeof this.sandbox.componentWillDestroy)
+            await this.sandbox.componentWillDestroy();
+        process.off('message', this.messageHandler);
+        delete this.sandbox.send;
+        delete this.sandbox.kill;
+        if (this.sandbox.createAgent)
+            delete this.sandbox.createAgent;
+        if (this.sandbox.createWorkerForker)
+            delete this.sandbox.createWorkerForker;
+        unbindError(this.errorHandler);
+        const errorHandler = (err) => console.error('[closing error]:', err);
+        bindError(errorHandler);
+        if (typeof this.sandbox.componentDidDestroyed)
+            await this.sandbox.componentDidDestroyed();
+    }
+    async createMessager() {
+        this.messageHandler = (message, socket) => {
+            switch (message) {
+                case 'kill':
+                    this.processer.closingSelfStatus = 1;
+                    break;
+                default: this.sandbox.componentReceiveMessage && this.sandbox.componentReceiveMessage(message, socket);
+            }
+        };
+        process.on('message', this.messageHandler);
+    }
+}
+new Runtime()
+    .create()
+    .then(() => sendToParent(utils_1.STATUS.BOOTSTRAP_SUCCESS));
+function bindError(callback) {
+    ['error', 'unhandledRejection', 'uncaughtException'].forEach((name) => process.on(name, callback));
+}
+function unbindError(callback) {
+    ['error', 'unhandledRejection', 'uncaughtException'].forEach((name) => process.off(name, callback));
+}
+function sendToParent(value, socket) {
+    if (args.kind !== utils_1.CHILD_PROCESS_TYPE.MASTER) {
+        process.send(value, socket);
+    }
+}
