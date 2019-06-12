@@ -3,7 +3,7 @@ import * as childProcess from 'child_process';
 import { CHILD_PROCESS_TYPE, STATUS, safeClose, AGENT, WORKER } from './utils';
 import Node from './node';
 import * as cluster from 'cluster';
-const scriptFilename = path.resolve(__dirname, './index');
+const scriptFilename = path.resolve(__dirname, './runtime');
 
 export default class Process {
   private _mpid: number;
