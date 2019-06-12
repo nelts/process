@@ -36,7 +36,7 @@ class Runtime {
         this.sandbox = new sandbox.default(this.processer, args);
     }
     async create() {
-        if (typeof this.sandbox.componentWillCreate)
+        if (typeof this.sandbox.componentWillCreate === 'function')
             await this.sandbox.componentWillCreate();
         this.createMessager();
         unbindError(errorHandler);
@@ -46,7 +46,7 @@ class Runtime {
             await this.sandbox.componentDidCreated();
     }
     async destroy() {
-        if (typeof this.sandbox.componentWillDestroy)
+        if (typeof this.sandbox.componentWillDestroy === 'function')
             await this.sandbox.componentWillDestroy();
         process.off('message', this.messageHandler);
         delete this.sandbox.send;
@@ -58,7 +58,7 @@ class Runtime {
         unbindError(this.errorHandler);
         const errorHandler = (err) => console.error('[closing error]:', err);
         bindError(errorHandler);
-        if (typeof this.sandbox.componentDidDestroyed)
+        if (typeof this.sandbox.componentDidDestroyed === 'function')
             await this.sandbox.componentDidDestroyed();
     }
     async createMessager() {
