@@ -1,0 +1,21 @@
+{
+  "name": "@nelts/process",
+  "version": "1.0.0",
+  "description": "nelts client inteface line tool",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts --script=test/index.ts"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@types/minimist": "^1.2.0",
+    "@types/node": "^12.0.8",
+    "minimist": "^1.2.0",
+    "reflect-metadata": "^0.1.13"
+  }
+}
