@@ -1,0 +1,34 @@
+import { CHILD_PROCESS_TYPE, STATUS } from './utils';
+import Node from './node';
+export default class Process {
+    private _mpid;
+    private _agents;
+    private _workers;
+    private _pids;
+    private _kind;
+    private _onExit;
+    private _closing;
+    private _closingAgentsStatus;
+    private _closingWorkersStatus;
+    private _closingSelfStatus;
+    private _timer;
+    constructor(kind?: CHILD_PROCESS_TYPE, mpid?: number);
+    closingSelfStatus: STATUS;
+    readonly workers: Array<Node>;
+    readonly agents: {
+        [name: string]: Node;
+    };
+    readonly pids: {
+        [id: number]: Node;
+    };
+    _onMessage(message: any, socket: any): Node;
+    kill(pid?: number): void;
+    private _close;
+    onExit(callback: Function): void;
+    createAgent(cwd: string, name: string, file: string, args?: {
+        [name: string]: any;
+    }): Promise<unknown>;
+    createWorkerForker(cwd: string, name: string, file: string, args?: {
+        [name: string]: any;
+    }): () => Promise<unknown>;
+}
