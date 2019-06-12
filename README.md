@@ -13,7 +13,7 @@ npm i @nelts/process
 开发模式下启动
 
 ```bash
-ts-node node_modules/@nelts/cli/dist/runtime.js --script={start file name}
+ts-node node_modules/@nelts/cli/dist/runtime.ts --script={start file name}
 ```
 
 生产环境下启动，建议使用[PM2](https://www.npmjs.com/package/pm2)启动。
