@@ -14,8 +14,8 @@ export default class IndexComponent extends ProcessComponent {
   async componentDidCreated() {
     console.log('index: in2')
     // // throw new Error('xx2')
-    const fork = this.createWorkerForker('test/worker.ts');
-    await this.createAgent('test', 'test/file.ts');
+    const fork = this.createWorkerForker('test/worker');
+    await this.createAgent('test', 'test/file');
     await fork();
   }
 

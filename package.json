@@ -4,7 +4,7 @@
   "description": "nelts client inteface line tool",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node src/index.ts --script=test/index.ts",
+    "dev": "ts-node src/runtime.ts --script=test/index.ts",
     "build": "rm -rf dist/ && tsc -d"
   },
   "files": [
