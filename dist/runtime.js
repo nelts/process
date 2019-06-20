@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("reflect-metadata");
 const path = require("path");
 const process_1 = require("./process");
 const utils_1 = require("./utils");

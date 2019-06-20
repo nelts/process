@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import * as path from 'path';
 import processer from './process';
 import { STATUS, CHILD_PROCESS_TYPE } from './utils';
