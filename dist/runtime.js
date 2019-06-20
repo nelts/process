@@ -17,7 +17,7 @@ if (argv.length === 1 && argv[0].startsWith('{') && argv[0].endsWith('}')) {
 else {
     args = commandArgvParser(argv) || {};
 }
-if (!path.isAbsolute(args.script)) {
+if (args.script && !path.isAbsolute(args.script)) {
     args.script = path.resolve(process.cwd(), args.script);
 }
 args.kind = args.kind || utils_1.CHILD_PROCESS_TYPE.MASTER;
@@ -28,12 +28,15 @@ const errorHandler = (err) => {
     process.exit(1);
 };
 bindError(errorHandler);
-const sandbox = require(args.script);
+const ModuleHandleFile = args.module || args.script;
+if (!ModuleHandleFile)
+    throw new Error('cannot find the argument of `module` or `script`');
+const sandbox = require(ModuleHandleFile);
 class Runtime {
     constructor() {
         this.processer = new process_1.default(args.kind, args.mpid);
         this.processer.onExit((next) => this.destroy().then(next).catch(next));
-        this.sandbox = new sandbox.default(this.processer, args);
+        this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
     }
     async create() {
         if (typeof this.sandbox.componentWillCreate === 'function')
