@@ -1,7 +1,7 @@
 import Processer from './process';
 import { CHILD_PROCESS_TYPE } from './utils';
 export default class ProcessComponent {
-  private processer: Processer;
+  public processer: Processer;
   private arguments: { [name:string]: any };
 
   constructor(processer: Processer, args: { [name:string]: any }) {

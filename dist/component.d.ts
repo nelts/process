@@ -1,6 +1,6 @@
 import Processer from './process';
 export default class ProcessComponent {
-    private processer;
+    processer: Processer;
     private arguments;
     constructor(processer: Processer, args: {
         [name: string]: any;

@@ -8,8 +8,9 @@ export default class Node extends emitter.EventEmitter {
     private _kind;
     private _name;
     constructor(target: AGENT | WORKER, kind: CHILD_PROCESS_TYPE, name: string);
-    readonly pid: number | undefined;
-    readonly killed: boolean | undefined;
+    readonly name: string;
+    readonly pid: number;
+    readonly killed: boolean;
     status: STATUS;
     onClose(app: Processer): void;
     onCreatedReceiveMessage(callback: Function): void;

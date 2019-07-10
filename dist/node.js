@@ -10,6 +10,9 @@ class Node extends emitter.EventEmitter {
         this._kind = kind;
         this._name = name;
     }
+    get name() {
+        return this._name;
+    }
     get pid() {
         switch (this._kind) {
             case utils_1.CHILD_PROCESS_TYPE.WORKER: return this._target.process.pid;

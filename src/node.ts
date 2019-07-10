@@ -20,14 +20,18 @@ export default class Node extends emitter.EventEmitter {
     this._name = name;
   }
 
-  get pid(): number | undefined {
+  get name() {
+    return this._name;
+  }
+
+  get pid() {
     switch (this._kind) {
       case CHILD_PROCESS_TYPE.WORKER: return (this._target as WORKER).process.pid;
       case CHILD_PROCESS_TYPE.AGENT: return (this._target as AGENT).pid;
     }
   }
 
-  get killed(): boolean | undefined {
+  get killed() {
     switch (this._kind) {
       case CHILD_PROCESS_TYPE.WORKER: return (this._target as WORKER).isDead();
       case CHILD_PROCESS_TYPE.AGENT: return (this._target as AGENT).killed;
