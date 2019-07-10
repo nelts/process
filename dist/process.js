@@ -128,7 +128,13 @@ class Process {
         agent.node = node;
         const bootstrap_exit_listener = () => node.status = utils_1.STATUS.BOOTSTRAP_FAILED;
         agent.on('exit', bootstrap_exit_listener);
-        const bootstrap_message_handler = (status) => node.status = status;
+        const bootstrap_message_handler = (status) => {
+            if (typeof status !== 'number') {
+                console.error('Agent Bootstrap lifecycle receive data only accept number type');
+                return this.kill();
+            }
+            node.status = status;
+        };
         agent.on('message', bootstrap_message_handler);
         return new Promise((resolve, reject) => {
             const node_status_handler = (value) => {
@@ -210,6 +216,10 @@ class Process {
                     fork();
             };
             const msg_handler = (worker, code) => {
+                if (typeof code !== 'number') {
+                    console.error(' Worker Bootstrap lifecycle receive data only accept number type');
+                    return this.kill();
+                }
                 const node = worker.node;
                 if (node) {
                     node.status = code;

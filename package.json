@@ -1,6 +1,6 @@
 {
   "name": "@nelts/process",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "nelts client inteface line tool",
   "main": "dist/index.js",
   "scripts": {
