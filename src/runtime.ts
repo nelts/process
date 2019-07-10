@@ -76,6 +76,7 @@ class Runtime {
         default: this.sandbox.componentReceiveMessage && this.sandbox.componentReceiveMessage(message, socket);
       }
     };
+    this.processer.onMessage(this.messageHandler);
     process.on('message', this.messageHandler);
   }
 }

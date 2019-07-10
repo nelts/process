@@ -12,6 +12,7 @@ export default class Process {
     private _closingWorkersStatus;
     private _closingSelfStatus;
     private _timer;
+    private _lazyMessager;
     constructor(kind?: CHILD_PROCESS_TYPE, mpid?: number);
     closingSelfStatus: STATUS;
     readonly workers: Array<Node>;
@@ -21,7 +22,8 @@ export default class Process {
     readonly pids: {
         [id: number]: Node;
     };
-    _onMessage(message: any, socket: any): Node;
+    onMessage(callback: Function): void;
+    private _onMessage;
     kill(pid?: number): void;
     private _close;
     onExit(callback: Function): void;

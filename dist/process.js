@@ -33,9 +33,14 @@ class Process {
     get pids() {
         return this._pids;
     }
+    onMessage(callback) {
+        this._lazyMessager = callback;
+    }
     _onMessage(message, socket) {
         if (typeof message === 'object') {
             const to = message.to;
+            if (typeof to === 'number' && to === process.pid)
+                return this._lazyMessager && this._lazyMessager(message, socket);
             if (typeof to === 'number' && this._pids[to])
                 return this._pids[to].send(message, socket);
             if (typeof to === 'string' && this._agents[to])

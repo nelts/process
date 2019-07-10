@@ -17,6 +17,7 @@ export default class Process {
   private _closingWorkersStatus: STATUS;
   private _closingSelfStatus: STATUS;
   private _timer: NodeJS.Timeout;
+  private _lazyMessager: Function;
 
   constructor(
     kind:CHILD_PROCESS_TYPE = CHILD_PROCESS_TYPE.MASTER, 
@@ -52,11 +53,16 @@ export default class Process {
     return this._pids;
   }
 
+  onMessage(callback: Function) {
+    this._lazyMessager = callback;
+  }
+
   // 从子进程收到的消息
   // 需要我们转发
-  _onMessage(message: any, socket: any) {
+  private _onMessage(message: any, socket: any) {
     if (typeof message === 'object') {
       const to = message.to;
+      if (typeof to === 'number' && to === process.pid) return this._lazyMessager && this._lazyMessager(message, socket);
       if (typeof to === 'number' && this._pids[to]) return this._pids[to].send(message, socket);
       if (typeof to === 'string' && this._agents[to]) return this._agents[to].send(message, socket);
       if (this._kind !== CHILD_PROCESS_TYPE.MASTER) process.send(message, socket);
