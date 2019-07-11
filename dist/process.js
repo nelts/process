@@ -17,7 +17,7 @@ class Process {
         this._closing = false;
         this._closingAgentsStatus = 0;
         this._closingWorkersStatus = 0;
-        this._closingSelfStatus = kind === utils_1.CHILD_PROCESS_TYPE.MASTER ? 1 : 0;
+        this._closingSelfStatus = 1;
         this._timer = setInterval(() => { }, 7 * 24 * 60 * 1000);
         utils_1.safeClose(() => this._close());
     }
