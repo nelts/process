@@ -8,7 +8,7 @@ import { configure, getLogger } from 'log4js';
 const loggerFilePath = path.resolve('logger.js');
 if (fs.existsSync(loggerFilePath)) configure(loggerFilePath);
 const logger = getLogger();
-logger.level = 'error';
+logger.level = 'debug';
 
 let args: any = {};
 const argv = process.argv.slice(2);
@@ -30,6 +30,8 @@ if (args.script && !path.isAbsolute(args.script)) {
 
 args.kind = args.kind || CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
+
+if (args.level) logger.level = args.level;
 
 const errorHandler = (err: Error) => {
   logger.error('[bootstrap error]:', err);

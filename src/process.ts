@@ -172,10 +172,7 @@ export default class Process {
 
     // 启动时候接受消息事件
     const bootstrap_message_handler = (status: STATUS) => {
-      if (typeof status !== 'number') {
-        this._logger.error('Agent Bootstrap lifecycle receive data only accept number type');
-        return this.kill();
-      }
+      if (typeof status !== 'number') return;
       node.status = status;
     }
     agent.on('message', bootstrap_message_handler);
@@ -273,10 +270,7 @@ export default class Process {
       }
 
       const msg_handler = (worker: WORKER, code: number) => {
-        if (typeof code !== 'number') {
-          this._logger.error(' Worker Bootstrap lifecycle receive data only accept number type');
-          return this.kill();
-        }
+        if (typeof code !== 'number') return;
         const node = worker.node;
         if (node) {
           node.status = code;

@@ -10,7 +10,7 @@ const loggerFilePath = path.resolve('logger.js');
 if (fs.existsSync(loggerFilePath))
     log4js_1.configure(loggerFilePath);
 const logger = log4js_1.getLogger();
-logger.level = 'error';
+logger.level = 'debug';
 let args = {};
 const argv = process.argv.slice(2);
 if (!argv.length) {
@@ -28,6 +28,8 @@ if (args.script && !path.isAbsolute(args.script)) {
 }
 args.kind = args.kind || utils_1.CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
+if (args.level)
+    logger.level = args.level;
 const errorHandler = (err) => {
     logger.error('[bootstrap error]:', err);
     sendToParent(utils_1.STATUS.BOOTSTRAP_FAILED);
