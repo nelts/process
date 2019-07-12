@@ -1,5 +1,6 @@
 import { CHILD_PROCESS_TYPE, STATUS } from './utils';
 import Node from './node';
+import { Logger } from 'log4js';
 export default class Process {
     private _mpid;
     private _agents;
@@ -13,7 +14,8 @@ export default class Process {
     private _closingSelfStatus;
     private _timer;
     private _lazyMessager;
-    constructor(kind?: CHILD_PROCESS_TYPE, mpid?: number);
+    private _logger;
+    constructor(logger: Logger, kind?: CHILD_PROCESS_TYPE, mpid?: number);
     closingSelfStatus: STATUS;
     readonly workers: Array<Node>;
     readonly agents: {
@@ -22,6 +24,7 @@ export default class Process {
     readonly pids: {
         [id: number]: Node;
     };
+    readonly logger: Logger;
     onMessage(callback: Function): void;
     private _onMessage;
     kill(pid?: number): void;

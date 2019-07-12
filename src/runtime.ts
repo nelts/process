@@ -1,13 +1,20 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import processer from './process';
 import { STATUS, CHILD_PROCESS_TYPE } from './utils';
 import * as commandArgvParser from 'minimist';
+import { configure, getLogger } from 'log4js';
+
+const loggerFilePath = path.resolve('logger.js');
+if (fs.existsSync(loggerFilePath)) configure(loggerFilePath);
+const logger = getLogger();
+logger.level = 'error';
 
 let args: any = {};
 const argv = process.argv.slice(2);
 
 if (!argv.length) {
-  console.error('process.argv need arguments');
+  logger.error('process.argv need arguments');
   process.exit(1);
 }
 
@@ -25,7 +32,7 @@ args.kind = args.kind || CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
 
 const errorHandler = (err: Error) => {
-  console.error('[bootstrap error]:', err);
+  logger.error('[bootstrap error]:', err);
   sendToParent(STATUS.BOOTSTRAP_FAILED);
   process.exit(1);
 }
@@ -42,7 +49,7 @@ class Runtime {
   private messageHandler: (...args: any[]) => void;
 
   constructor() {
-    this.processer = new processer(args.kind, args.mpid);
+    this.processer = new processer(logger, args.kind, args.mpid);
     this.processer.onExit((next: () => PromiseLike<void>) => this.destroy().then(next).catch(next));
     this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
   }
@@ -64,7 +71,7 @@ class Runtime {
     if (this.sandbox.createAgent) delete this.sandbox.createAgent;
     if (this.sandbox.createWorkerForker) delete this.sandbox.createWorkerForker;
     unbindError(this.errorHandler);
-    const errorHandler = (err: Error) => console.error('[closing error]:', err);
+    const errorHandler = (err: Error) => logger.error('[closing error]:', err);
     bindError(errorHandler);
     if (typeof this.sandbox.componentDidDestroyed === 'function') await this.sandbox.componentDidDestroyed();
   }

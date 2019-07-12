@@ -1,13 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs = require("fs");
 const path = require("path");
 const process_1 = require("./process");
 const utils_1 = require("./utils");
 const commandArgvParser = require("minimist");
+const log4js_1 = require("log4js");
+const loggerFilePath = path.resolve('logger.js');
+if (fs.existsSync(loggerFilePath))
+    log4js_1.configure(loggerFilePath);
+const logger = log4js_1.getLogger();
+logger.level = 'error';
 let args = {};
 const argv = process.argv.slice(2);
 if (!argv.length) {
-    console.error('process.argv need arguments');
+    logger.error('process.argv need arguments');
     process.exit(1);
 }
 if (argv.length === 1 && argv[0].startsWith('{') && argv[0].endsWith('}')) {
@@ -22,7 +29,7 @@ if (args.script && !path.isAbsolute(args.script)) {
 args.kind = args.kind || utils_1.CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
 const errorHandler = (err) => {
-    console.error('[bootstrap error]:', err);
+    logger.error('[bootstrap error]:', err);
     sendToParent(utils_1.STATUS.BOOTSTRAP_FAILED);
     process.exit(1);
 };
@@ -33,7 +40,7 @@ if (!ModuleHandleFile)
 const sandbox = require(ModuleHandleFile);
 class Runtime {
     constructor() {
-        this.processer = new process_1.default(args.kind, args.mpid);
+        this.processer = new process_1.default(logger, args.kind, args.mpid);
         this.processer.onExit((next) => this.destroy().then(next).catch(next));
         this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
     }
@@ -58,7 +65,7 @@ class Runtime {
         if (this.sandbox.createWorkerForker)
             delete this.sandbox.createWorkerForker;
         unbindError(this.errorHandler);
-        const errorHandler = (err) => console.error('[closing error]:', err);
+        const errorHandler = (err) => logger.error('[closing error]:', err);
         bindError(errorHandler);
         if (typeof this.sandbox.componentDidDestroyed === 'function')
             await this.sandbox.componentDidDestroyed();

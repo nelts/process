@@ -7,7 +7,8 @@ const node_1 = require("./node");
 const cluster = require("cluster");
 const scriptFilename = path.resolve(__dirname, './runtime');
 class Process {
-    constructor(kind = utils_1.CHILD_PROCESS_TYPE.MASTER, mpid = process.pid) {
+    constructor(logger, kind = utils_1.CHILD_PROCESS_TYPE.MASTER, mpid = process.pid) {
+        this._logger = logger;
         this._mpid = mpid;
         this._agents = {};
         this._workers = [];
@@ -32,6 +33,9 @@ class Process {
     }
     get pids() {
         return this._pids;
+    }
+    get logger() {
+        return this._logger;
     }
     onMessage(callback) {
         this._lazyMessager = callback;
@@ -135,7 +139,7 @@ class Process {
         agent.on('exit', bootstrap_exit_listener);
         const bootstrap_message_handler = (status) => {
             if (typeof status !== 'number') {
-                console.error('Agent Bootstrap lifecycle receive data only accept number type');
+                this._logger.error('Agent Bootstrap lifecycle receive data only accept number type');
                 return this.kill();
             }
             node.status = status;
@@ -222,7 +226,7 @@ class Process {
             };
             const msg_handler = (worker, code) => {
                 if (typeof code !== 'number') {
-                    console.error(' Worker Bootstrap lifecycle receive data only accept number type');
+                    this._logger.error(' Worker Bootstrap lifecycle receive data only accept number type');
                     return this.kill();
                 }
                 const node = worker.node;

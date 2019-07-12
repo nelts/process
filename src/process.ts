@@ -4,6 +4,7 @@ import { CHILD_PROCESS_TYPE, STATUS, safeClose, AGENT, WORKER } from './utils';
 import Node from './node';
 import * as cluster from 'cluster';
 const scriptFilename = path.resolve(__dirname, './runtime');
+import { Logger } from 'log4js';
 
 export default class Process {
   private _mpid: number;
@@ -18,11 +19,14 @@ export default class Process {
   private _closingSelfStatus: STATUS;
   private _timer: NodeJS.Timeout;
   private _lazyMessager: Function;
+  private _logger: Logger;
 
   constructor(
-    kind:CHILD_PROCESS_TYPE = CHILD_PROCESS_TYPE.MASTER, 
+    logger: Logger,
+    kind: CHILD_PROCESS_TYPE = CHILD_PROCESS_TYPE.MASTER, 
     mpid: number = process.pid
   ) {
+    this._logger = logger;
     this._mpid = mpid;
     this._agents = {};
     this._workers = [];
@@ -52,6 +56,10 @@ export default class Process {
 
   get pids(): { [id: number]: Node } {
     return this._pids;
+  }
+
+  get logger() {
+    return this._logger;
   }
 
   onMessage(callback: Function) {
@@ -165,7 +173,7 @@ export default class Process {
     // 启动时候接受消息事件
     const bootstrap_message_handler = (status: STATUS) => {
       if (typeof status !== 'number') {
-        console.error('Agent Bootstrap lifecycle receive data only accept number type');
+        this._logger.error('Agent Bootstrap lifecycle receive data only accept number type');
         return this.kill();
       }
       node.status = status;
@@ -266,7 +274,7 @@ export default class Process {
 
       const msg_handler = (worker: WORKER, code: number) => {
         if (typeof code !== 'number') {
-          console.error(' Worker Bootstrap lifecycle receive data only accept number type');
+          this._logger.error(' Worker Bootstrap lifecycle receive data only accept number type');
           return this.kill();
         }
         const node = worker.node;
