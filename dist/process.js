@@ -117,7 +117,9 @@ class Process {
             this._onExit = callback;
         }
     }
-    createAgent(cwd = process.cwd(), name, file, args = {}) {
+    createAgent(cwd = process.cwd(), name, file, args = {
+        killSelf: false,
+    }) {
         if (this._agents[name])
             throw new Error('agent is already exist: ' + name);
         const opts = {
@@ -150,7 +152,7 @@ class Process {
                         agent.off('exit', bootstrap_exit_listener);
                         agent.off('message', bootstrap_message_handler);
                         node.off('status', node_status_handler);
-                        this.kill();
+                        this.kill(args.killSelf ? node.pid : undefined);
                         reject();
                         break;
                     case utils_1.STATUS.BOOTSTRAP_SUCCESS:

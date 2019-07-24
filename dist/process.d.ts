@@ -31,6 +31,7 @@ export default class Process {
     private _close;
     onExit(callback: Function): void;
     createAgent(cwd: string, name: string, file: string, args?: {
+        killSelf?: boolean;
         [name: string]: any;
     }): Promise<unknown>;
     createWorkerForker(cwd: string, name: string, file: string, args?: {

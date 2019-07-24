@@ -144,7 +144,12 @@ export default class Process {
     cwd: string = process.cwd(), 
     name: string, 
     file: string, 
-    args: { [name:string]: any } = {}
+    args: { 
+      killSelf?: boolean,
+      [name:string]: any,
+    } = {
+      killSelf: false,
+    }
   ) {
     if (this._agents[name]) throw new Error('agent is already exist: ' + name);
 
@@ -185,7 +190,7 @@ export default class Process {
             agent.off('exit', bootstrap_exit_listener);
             agent.off('message', bootstrap_message_handler);
             node.off('status', node_status_handler);
-            this.kill();
+            this.kill(args.killSelf ? node.pid : undefined);
             reject();
             break;
           case STATUS.BOOTSTRAP_SUCCESS: 
