@@ -4,6 +4,8 @@ import Processer from './process';
 export { Component, Node, Processer };
 export * from './utils';
 export interface ProcessArgvType {
+    cwd?: string;
+    env?: string;
     script?: string;
     kind?: number;
     mpid?: number;
