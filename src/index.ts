@@ -26,6 +26,7 @@ export class WidgetComponent extends Component {
   componentWillDestroy?(): Promise<any>;
   componentDidDestroyed?(): Promise<any>;
   componentCatchError?(err: Error): void;
+  componentReceiveMessage?(message: any, socket?:any): void;
   constructor(processer: Processer, args: ProcessArgvType) {
     super(processer, args);
   }
