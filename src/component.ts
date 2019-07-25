@@ -1,10 +1,11 @@
 import Processer from './process';
 import { CHILD_PROCESS_TYPE } from './utils';
+import { ProcessArgvType } from './index';
 export default class ProcessComponent {
   public processer: Processer;
   private arguments: { [name:string]: any };
 
-  constructor(processer: Processer, args: { [name:string]: any }) {
+  constructor(processer: Processer, args: ProcessArgvType) {
     this.processer = processer;
     this.arguments = args;
   }

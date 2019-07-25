@@ -6,17 +6,17 @@ const process_1 = require("./process");
 const utils_1 = require("./utils");
 const commandArgvParser = require("minimist");
 const log4js_1 = require("log4js");
-const loggerFilePath = path.resolve('logger.js');
-if (fs.existsSync(loggerFilePath))
-    log4js_1.configure(loggerFilePath);
-const logger = log4js_1.getLogger();
-logger.level = 'debug';
+let logger = console;
+const errorHandler = (err) => {
+    logger.error('[bootstrap error]:', err);
+    sendToParent(utils_1.STATUS.BOOTSTRAP_FAILED);
+    process.exit(1);
+};
+bindError(errorHandler);
 let args = {};
 const argv = process.argv.slice(2);
-if (!argv.length) {
-    logger.error('process.argv need arguments');
-    process.exit(1);
-}
+if (!argv.length)
+    throw new Error('process.argv must be an array of string');
 if (argv.length === 1 && argv[0].startsWith('{') && argv[0].endsWith('}')) {
     args = JSON.parse(argv[0]);
 }
@@ -28,14 +28,28 @@ if (args.script && !path.isAbsolute(args.script)) {
 }
 args.kind = args.kind || utils_1.CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
-if (args.level)
-    logger.level = args.level;
-const errorHandler = (err) => {
-    logger.error('[bootstrap error]:', err);
-    sendToParent(utils_1.STATUS.BOOTSTRAP_FAILED);
-    process.exit(1);
-};
-bindError(errorHandler);
+const loggerFilePath = path.resolve(`logger.configure.js`);
+let loggerConfiguration = fs.existsSync(loggerFilePath) ? require(loggerFilePath) : {};
+loggerConfiguration.appenders && log4js_1.configure(loggerConfiguration);
+let category = 'default';
+if (!loggerConfiguration.categories || !loggerConfiguration.categories.default)
+    throw new Error('logger must have a category of default');
+switch (args.kind) {
+    case utils_1.CHILD_PROCESS_TYPE.WORKER:
+        if (loggerConfiguration.categories.worker)
+            category = 'worker';
+        break;
+    case utils_1.CHILD_PROCESS_TYPE.MASTER:
+        if (loggerConfiguration.categories.master)
+            category = 'master';
+        break;
+    default:
+        if (args.name && loggerConfiguration.categories[args.name])
+            category = args.name;
+        if (category === 'default' && loggerConfiguration.categories.agent)
+            category = 'agent';
+}
+logger = log4js_1.getLogger(category);
 const ModuleHandleFile = args.module || args.script;
 if (!ModuleHandleFile)
     throw new Error('cannot find the argument of `module` or `script`');

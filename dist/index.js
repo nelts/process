@@ -10,3 +10,9 @@ exports.Node = node_1.default;
 const process_1 = require("./process");
 exports.Processer = process_1.default;
 __export(require("./utils"));
+class WidgetComponent extends component_1.default {
+    constructor(processer, args) {
+        super(processer, args);
+    }
+}
+exports.WidgetComponent = WidgetComponent;

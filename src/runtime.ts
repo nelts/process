@@ -1,23 +1,23 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import processer from './process';
+import { ProcessArgvType } from './index';
 import { STATUS, CHILD_PROCESS_TYPE } from './utils';
 import * as commandArgvParser from 'minimist';
-import { configure, getLogger } from 'log4js';
-
-const loggerFilePath = path.resolve('logger.js');
-if (fs.existsSync(loggerFilePath)) configure(loggerFilePath);
-const logger = getLogger();
-logger.level = 'debug';
-
-let args: any = {};
-const argv = process.argv.slice(2);
-
-if (!argv.length) {
-  logger.error('process.argv need arguments');
+import { configure, getLogger, Configuration, Logger } from 'log4js';
+let logger: Logger | Console = console;
+const errorHandler = (err: Error) => {
+  logger.error('[bootstrap error]:', err);
+  sendToParent(STATUS.BOOTSTRAP_FAILED);
   process.exit(1);
 }
 
+bindError(errorHandler);
+
+let args: ProcessArgvType = {};
+const argv = process.argv.slice(2);
+
+if (!argv.length) throw new Error('process.argv must be an array of string');
 if (argv.length === 1 && argv[0].startsWith('{') && argv[0].endsWith('}')) {
   args = JSON.parse(argv[0]);
 } else {
@@ -31,15 +31,25 @@ if (args.script && !path.isAbsolute(args.script)) {
 args.kind = args.kind || CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
 
-if (args.level) logger.level = args.level;
+const loggerFilePath = path.resolve(`logger.configure.js`);
+let loggerConfiguration = fs.existsSync(loggerFilePath) ? require(loggerFilePath) : {};
+loggerConfiguration.appenders && configure(<Configuration>loggerConfiguration);
 
-const errorHandler = (err: Error) => {
-  logger.error('[bootstrap error]:', err);
-  sendToParent(STATUS.BOOTSTRAP_FAILED);
-  process.exit(1);
+let category: string = 'default';
+if (!loggerConfiguration.categories || !loggerConfiguration.categories.default) throw new Error('logger must have a category of default');
+switch (args.kind) {
+  case CHILD_PROCESS_TYPE.WORKER: 
+    if (loggerConfiguration.categories.worker) category = 'worker';
+    break;
+  case CHILD_PROCESS_TYPE.MASTER:
+    if (loggerConfiguration.categories.master) category = 'master';
+    break;
+  default:
+    if (args.name && loggerConfiguration.categories[args.name]) category = args.name;
+    if (category === 'default' && loggerConfiguration.categories.agent) category = 'agent';
 }
 
-bindError(errorHandler);
+logger = getLogger(category);
 
 const ModuleHandleFile = args.module || args.script;
 if (!ModuleHandleFile) throw new Error('cannot find the argument of `module` or `script`');
@@ -51,7 +61,7 @@ class Runtime {
   private messageHandler: (...args: any[]) => void;
 
   constructor() {
-    this.processer = new processer(logger, args.kind, args.mpid);
+    this.processer = new processer(<Logger>logger, args.kind, args.mpid);
     this.processer.onExit((next: () => PromiseLike<void>) => this.destroy().then(next).catch(next));
     this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
   }
