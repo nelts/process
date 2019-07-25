@@ -1,7 +1,6 @@
 import Component from './component';
 import Node from './node';
 import Processer from './process';
-import * as commandArgvParser from 'minimist';
 
 export {
   Component,
@@ -11,7 +10,7 @@ export {
 
 export * from './utils';
 
-export type ProcessArgvType = commandArgvParser.ParsedArgs | {
+export interface ProcessArgvType {
   script?: string,
   kind?: number,
   mpid?: number,

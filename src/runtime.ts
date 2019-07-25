@@ -21,7 +21,7 @@ if (!argv.length) throw new Error('process.argv must be an array of string');
 if (argv.length === 1 && argv[0].startsWith('{') && argv[0].endsWith('}')) {
   args = JSON.parse(argv[0]);
 } else {
-  args = commandArgvParser(argv) || {};
+  args = (commandArgvParser(argv) || {}) as ProcessArgvType;
 }
 
 if (args.script && !path.isAbsolute(args.script)) {

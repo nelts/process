@@ -1,16 +1,15 @@
 import Component from './component';
 import Node from './node';
 import Processer from './process';
-import * as commandArgvParser from 'minimist';
 export { Component, Node, Processer };
 export * from './utils';
-export declare type ProcessArgvType = commandArgvParser.ParsedArgs | {
+export interface ProcessArgvType {
     script?: string;
     kind?: number;
     mpid?: number;
     module?: string;
     name?: string;
-};
+}
 export declare class WidgetComponent extends Component {
     componentWillCreate?(): Promise<any>;
     componentDidCreated?(): Promise<any>;
