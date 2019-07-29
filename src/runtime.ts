@@ -62,7 +62,7 @@ class Runtime {
 
   constructor() {
     this.processer = new processer(<Logger>logger, args.kind, args.mpid);
-    this.processer.onExit((next: () => PromiseLike<void>) => this.destroy().then(next).catch(next));
+    this.processer.onExit((next: () => Promise<void>) => this.destroy().then(next).catch(next));
     this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
   }
 
