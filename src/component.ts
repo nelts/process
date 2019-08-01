@@ -1,11 +1,13 @@
 import Processer from './process';
 import { CHILD_PROCESS_TYPE } from './utils';
 import { ProcessArgvType } from './index';
-export default class ProcessComponent {
+import { EventEmitter } from '@nelts/utils';
+export default class ProcessComponent extends EventEmitter {
   public processer: Processer;
   private arguments: { [name:string]: any };
 
   constructor(processer: Processer, args: ProcessArgvType) {
+    super();
     this.processer = processer;
     this.arguments = args;
   }

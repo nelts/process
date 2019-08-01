@@ -1,8 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
-class ProcessComponent {
+const utils_2 = require("@nelts/utils");
+class ProcessComponent extends utils_2.EventEmitter {
     constructor(processer, args) {
+        super();
         this.processer = processer;
         this.arguments = args;
     }
