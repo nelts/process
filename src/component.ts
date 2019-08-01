@@ -12,6 +12,22 @@ export default class ProcessComponent extends EventEmitter {
     this.arguments = args;
   }
 
+  get kind() {
+    return this.arguments.kind;
+  }
+
+  get isWorker() {
+    return this.kind === CHILD_PROCESS_TYPE.WORKER;
+  }
+
+  get isMaster() {
+    return this.kind === CHILD_PROCESS_TYPE.MASTER;
+  }
+
+  get isAgent() {
+    return this.kind === CHILD_PROCESS_TYPE.AGENT;
+  }
+
   kill(pid: number = 0) {
     return this.processer.kill(pid);
   }
