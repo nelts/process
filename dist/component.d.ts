@@ -12,5 +12,5 @@ export default class ProcessComponent extends EventEmitter {
     kill(pid?: number): void;
     send(message: any, socket: any): void;
     createAgent(name: string, file: string, _args?: any): Promise<unknown>;
-    createWorkerForker(file: string, _args?: any): () => Promise<unknown>;
+    createWorkerForker(file: string, _args?: any): () => Promise<import("./node").default>;
 }

@@ -36,5 +36,5 @@ export default class Process {
     }): Promise<unknown>;
     createWorkerForker(cwd: string, name: string, file: string, args?: {
         [name: string]: any;
-    }): () => Promise<unknown>;
+    }): () => Promise<Node>;
 }

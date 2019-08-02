@@ -233,7 +233,7 @@ export default class Process {
 
     cluster.setupMaster(opts);
 
-    const fork = () => new Promise((resolve, reject) => {
+    const fork: () => Promise<Node> = () => new Promise((resolve, reject) => {
       const node_handler = (node: Node) => (value: STATUS) => {
         switch (value) {
           case STATUS.BOOTSTRAP_FAILED: 
