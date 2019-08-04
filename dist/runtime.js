@@ -65,7 +65,7 @@ class Runtime {
             await this.sandbox.componentWillCreate();
         this.createMessager();
         unbindError(errorHandler);
-        this.errorHandler = err => this.sandbox.componentCatchError && this.sandbox.componentCatchError(err);
+        this.errorHandler = err => err && this.sandbox.componentCatchError && this.sandbox.componentCatchError(err);
         bindError(this.errorHandler);
         if (typeof this.sandbox.componentDidCreated === 'function')
             await this.sandbox.componentDidCreated();
