@@ -14,9 +14,9 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@nelts/utils": "^1.0.18",
+    "@nelts/utils": "^1.0.20",
     "@types/minimist": "^1.2.0",
-    "@types/node": "^12.6.9",
+    "@types/node": "^12.7.2",
     "log4js": "^4.5.1",
     "minimist": "^1.2.0"
   }
