@@ -56,6 +56,7 @@ if (!ModuleHandleFile)
 const sandbox = require(ModuleHandleFile);
 class Runtime {
     constructor() {
+        logger.info('start process env:', process.env.NODE_ENV);
         this.processer = new process_1.default(logger, args.kind, args.mpid);
         this.processer.onExit((next) => this.destroy().then(next).catch(next));
         this.sandbox = new (sandbox.default || sandbox)(this.processer, args);

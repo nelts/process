@@ -161,7 +161,7 @@ export default class Process {
     };
 
     args.cwd = opts.cwd;
-    args.env = opts.env.NODE_ENV || 'production';
+    args.env = opts.env.NODE_ENV;
     args.script = file;
     args.name = name;
     args.kind = CHILD_PROCESS_TYPE.AGENT;
@@ -224,7 +224,7 @@ export default class Process {
 
     opts.args = [JSON.stringify(Object.assign(args, {
       cwd,
-      env: process.env.NODE_ENV || 'production',
+      env: process.env.NODE_ENV,
       script: file,
       name: name,
       kind: CHILD_PROCESS_TYPE.WORKER,

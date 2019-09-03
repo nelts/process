@@ -129,7 +129,7 @@ class Process {
             execArgv: process.execArgv.slice(0),
         };
         args.cwd = opts.cwd;
-        args.env = opts.env.NODE_ENV || 'production';
+        args.env = opts.env.NODE_ENV;
         args.script = file;
         args.name = name;
         args.kind = utils_1.CHILD_PROCESS_TYPE.AGENT;
@@ -178,7 +178,7 @@ class Process {
         };
         opts.args = [JSON.stringify(Object.assign(args, {
                 cwd,
-                env: process.env.NODE_ENV || 'production',
+                env: process.env.NODE_ENV,
                 script: file,
                 name: name,
                 kind: utils_1.CHILD_PROCESS_TYPE.WORKER,

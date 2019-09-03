@@ -61,6 +61,7 @@ class Runtime {
   private messageHandler: (...args: any[]) => void;
 
   constructor() {
+    logger.info('start process env:', process.env.NODE_ENV);
     this.processer = new processer(<Logger>logger, args.kind, args.mpid);
     this.processer.onExit((next: () => Promise<void>) => this.destroy().then(next).catch(next));
     this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
