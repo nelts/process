@@ -38,6 +38,9 @@ class Process {
     get logger() {
         return this._logger;
     }
+    get env() {
+        return this._env;
+    }
     onMessage(callback) {
         this._lazyMessager = callback;
     }

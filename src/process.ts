@@ -65,6 +65,10 @@ export default class Process {
     return this._logger;
   }
 
+  get env() {
+    return this._env;
+  }
+
   onMessage(callback: Function) {
     this._lazyMessager = callback;
   }

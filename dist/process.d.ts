@@ -26,6 +26,7 @@ export default class Process {
         [id: number]: Node;
     };
     readonly logger: Logger;
+    readonly env: string;
     onMessage(callback: Function): void;
     private _onMessage;
     kill(pid?: number): void;
