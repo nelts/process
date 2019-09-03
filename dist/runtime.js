@@ -26,6 +26,8 @@ else {
 if (args.script && !path.isAbsolute(args.script)) {
     args.script = path.resolve(process.cwd(), args.script);
 }
+if (!args.env)
+    args.env = process.env.NODE_ENV;
 args.kind = args.kind || utils_1.CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
 const loggerFilePath = path.resolve(`logger.configure.js`);
@@ -56,8 +58,8 @@ if (!ModuleHandleFile)
 const sandbox = require(ModuleHandleFile);
 class Runtime {
     constructor() {
-        logger.info('start process env:', process.env.NODE_ENV);
-        this.processer = new process_1.default(logger, args.kind, args.mpid);
+        logger.info('start process env:', args.env);
+        this.processer = new process_1.default(logger, args.kind, args.mpid, args.env);
         this.processer.onExit((next) => this.destroy().then(next).catch(next));
         this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
     }

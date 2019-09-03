@@ -7,12 +7,13 @@ const node_1 = require("./node");
 const cluster = require("cluster");
 const scriptFilename = path.resolve(__dirname, './runtime');
 class Process {
-    constructor(logger, kind = utils_1.CHILD_PROCESS_TYPE.MASTER, mpid = process.pid) {
+    constructor(logger, kind = utils_1.CHILD_PROCESS_TYPE.MASTER, mpid = process.pid, env) {
         this._logger = logger;
         this._mpid = mpid;
         this._agents = {};
         this._workers = [];
         this._pids = {};
+        this._env = env;
         this._kind = kind;
         this._onExit = null;
         this._closing = false;
@@ -129,7 +130,7 @@ class Process {
             execArgv: process.execArgv.slice(0),
         };
         args.cwd = opts.cwd;
-        args.env = opts.env.NODE_ENV;
+        args.env = this._env;
         args.script = file;
         args.name = name;
         args.kind = utils_1.CHILD_PROCESS_TYPE.AGENT;
@@ -178,7 +179,7 @@ class Process {
         };
         opts.args = [JSON.stringify(Object.assign(args, {
                 cwd,
-                env: process.env.NODE_ENV,
+                env: this._env,
                 script: file,
                 name: name,
                 kind: utils_1.CHILD_PROCESS_TYPE.WORKER,

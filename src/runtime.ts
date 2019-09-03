@@ -28,6 +28,7 @@ if (args.script && !path.isAbsolute(args.script)) {
   args.script = path.resolve(process.cwd(), args.script);
 }
 
+if (!args.env) args.env = process.env.NODE_ENV;
 args.kind = args.kind || CHILD_PROCESS_TYPE.MASTER;
 args.mpid = args.mpid || process.pid;
 
@@ -61,8 +62,8 @@ class Runtime {
   private messageHandler: (...args: any[]) => void;
 
   constructor() {
-    logger.info('start process env:', process.env.NODE_ENV);
-    this.processer = new processer(<Logger>logger, args.kind, args.mpid);
+    logger.info('start process env:', args.env);
+    this.processer = new processer(<Logger>logger, args.kind, args.mpid, args.env);
     this.processer.onExit((next: () => Promise<void>) => this.destroy().then(next).catch(next));
     this.sandbox = new (sandbox.default || sandbox)(this.processer, args);
   }

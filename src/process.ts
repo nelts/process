@@ -14,6 +14,7 @@ export default class Process {
   private _kind: CHILD_PROCESS_TYPE;
   private _onExit: Function;
   private _closing: boolean;
+  private _env: string;
   private _closingAgentsStatus: STATUS;
   private _closingWorkersStatus: STATUS;
   private _closingSelfStatus: STATUS;
@@ -24,13 +25,15 @@ export default class Process {
   constructor(
     logger: Logger,
     kind: CHILD_PROCESS_TYPE = CHILD_PROCESS_TYPE.MASTER, 
-    mpid: number = process.pid
+    mpid: number = process.pid,
+    env: string
   ) {
     this._logger = logger;
     this._mpid = mpid;
     this._agents = {};
     this._workers = [];
     this._pids = {};
+    this._env = env;
     this._kind = kind;
     this._onExit = null;
     this._closing = false;
@@ -152,7 +155,6 @@ export default class Process {
     }
   ) {
     if (this._agents[name]) throw new Error('agent is already exist: ' + name);
-
     const opts: childProcess.ForkOptions = {
       cwd: cwd,
       env: Object.create(process.env),
@@ -161,7 +163,7 @@ export default class Process {
     };
 
     args.cwd = opts.cwd;
-    args.env = opts.env.NODE_ENV;
+    args.env = this._env;
     args.script = file;
     args.name = name;
     args.kind = CHILD_PROCESS_TYPE.AGENT;
@@ -224,7 +226,7 @@ export default class Process {
 
     opts.args = [JSON.stringify(Object.assign(args, {
       cwd,
-      env: process.env.NODE_ENV,
+      env: this._env,
       script: file,
       name: name,
       kind: CHILD_PROCESS_TYPE.WORKER,

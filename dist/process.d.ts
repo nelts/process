@@ -9,13 +9,14 @@ export default class Process {
     private _kind;
     private _onExit;
     private _closing;
+    private _env;
     private _closingAgentsStatus;
     private _closingWorkersStatus;
     private _closingSelfStatus;
     private _timer;
     private _lazyMessager;
     private _logger;
-    constructor(logger: Logger, kind?: CHILD_PROCESS_TYPE, mpid?: number);
+    constructor(logger: Logger, kind: CHILD_PROCESS_TYPE, mpid: number, env: string);
     closingSelfStatus: STATUS;
     readonly workers: Array<Node>;
     readonly agents: {
