@@ -17,7 +17,7 @@
     "@nelts/utils": "^1.0.20",
     "@types/minimist": "^1.2.0",
     "@types/node": "^12.7.2",
-    "log4js": "^4.5.1",
+    "log4js": "^6.4.0",
     "minimist": "^1.2.0"
   }
 }
